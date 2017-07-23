@@ -28,7 +28,7 @@ function parseMethod(module, request, response){
         module.delete(response);
     }
 }
-// http://localhost          /bbs?title=서초구
+// http://localhost 
 function splitQuerystring(fullUrl){
     var position = fullUrl.indexOf('?'); // ?의 위치값을 반환. 없으면 -1
     if(position == -1){
