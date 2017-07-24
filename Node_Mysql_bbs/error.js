@@ -1,8 +1,16 @@
-exports.send = function(response, code){
-    response.writeHead(code,{'Content-Type':'text/html'});
+exports.send = function(response, code, err){
+    response.writeHead(code,{'Content-Type':'application/json;charset=utf-8'});
     if(code == 404){
-        response.end(code+" Page Not Found");
+        var errorObj = {
+            result : "404 Page Not Found",
+            msg : ""
+        };
+        response.end(JSON.stringify(errorObj));
     }else if(code == 500){
-        response.end(code+" Internal Server Error");
+        var errorObj = {
+            result : "500 Internal Server Error",
+            msg : err
+        };
+        response.end(JSON.stringify(errorObj));
     }
 }
