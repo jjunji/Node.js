@@ -15,9 +15,10 @@ exports.search = function(qs, callback){
 exports.insert = function(data, callback){
     console.log("in bbsDao insert");
     var query = " insert into "+tableName+"(title,content,author,date)";
+    console.log("pre query ==========" + query);
         query = query + " VALUES ?";
     var values = [data.title,data.content,data.author,data.date];
-    console.log(query);
+    console.log("result query =========="+ query);
     database.executeMulti(query, values, callback);
 }
 

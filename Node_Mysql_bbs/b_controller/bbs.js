@@ -27,8 +27,11 @@ exports.write = function(request, response){
     request.on('data', function(data){ // 데이터를 읽을 수 있을 때 호출
         postdata = postdata + data;
     });
+    console.log(postdata);
+
     request.on('end', function(){ // 데이터를 다 읽었을 때 호출
         var dataObj = JSON.parse(postdata);
+        console.log("dataObj =========================" + dataObj);
         dao.insert(dataObj, function(){
             send(response, '{"result":"ok"}');
         });

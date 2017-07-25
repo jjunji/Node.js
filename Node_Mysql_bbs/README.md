@@ -1,14 +1,17 @@
 # Database 연결
 
+
 ### server.js
+코드 작성 후 터미널에서 node server(js파일 명) 으로 실행. -> 진입점.
 ```JavaScript
 // 1. 서버모듈
 var http = require("http");
-var router = require("./module/router");
+var router = require("./a_router/router");
 // 2. 서버를 생성
 var server = http.createServer(function(request, response){
     // 요청 url 분석
     console.log("in server");
+    //---> 모든 요청에 대해 router.js 로 보낸다
     router.parse(request, response);
 });
 // 3. 서버를 시작 , 생성한 서버가 80번 포트를 리스닝 하도록 지정.
@@ -17,14 +20,15 @@ server.listen(80, function(){
 });
 ```
 * 서버가 생성되면 router 모듈의 parse( ) 함수 실행.
+*  
 
 --- 
 ### router.js
-코드 작성 후 터미널에서 node server(js파일 명) 으로 실행. -> 진입점.
+요청 url과 메소드를 분석하고 요청 url에 매핑되는 비즈니스 로직을 호출(경로 처리)
 ```JavaScript
 var error = require("../error");
-var bbs = require("../bbs");
-var user = require("../user");
+var bbs = require("../b_controller/bbs");
+var user = require("../b_controller/user");
 // request 를 분석해서 요청 url에 대한 연결
 // url 을 분석
 exports.parse = function (request, response){
@@ -90,7 +94,7 @@ function getQuerystring(fullUrl){
 
 ---
 ### bbs.js
-ㅇㅇㅇ
+bbsDao.js 를 통해 database를 읽고난 후 결과셋을 처리한다.
 ```JavaScript
 var dao = require("./bbsDao");
 var error = require("./error");
@@ -178,13 +182,17 @@ function send(response, result){
     response.end(result);
 }
 ```
-ㅇㅇㅇ
+* read, write, update, delete에 해당하는 body를 데이터에 담아 객체화 한다.
+* 각 로직의 postdata 변수가 가지고 있는 것은 웹에서 요청 시 담아서 보낸 json 형태의 문자열이다.
+*  JSON.parse(postdata); 를 하여 문자열을 json 형태로 넣어준다.
+	* 예를 들어 postdata -> { title: 'Title', author: 'jh', content: 'asdf' } 를 가지고 있다면,
+	   title = Title    author = jh   content = asdf  처럼 값을 넣어준다.
 
 ---
 ### bbsDao.js
-ㅇㅇㅇ
+실질적으로 Database와의 연결, 접근 하기 위한 파일
 ```JavaScript
-var database = require("./module/database");
+var database = require("../module/database/index");
 var tableName = "board";
 
 exports.select = function(callback){
@@ -202,9 +210,8 @@ exports.insert = function(data, callback){
     console.log("in bbsDao insert");
     var query = " insert into "+tableName+"(title,content,author,date)";
         query = query + " VALUES ?";
-    var values = [
-        [data.title,data.content,data.author,data.date]
-    ];
+    var values = [data.title,data.content,data.author,data.date];
+    console.log(query);
     database.executeMulti(query, values, callback);
 }
 
@@ -212,7 +219,9 @@ exports.update = function(data, callback){
     var query = " update "+tableName
                 + " set title=?, content=?, author=?, date=? where id=?";
     var now = new Date().toLocaleDateString();
-    var values = [data.title, data.content, data.author, now, data.id];
+    var values = [
+        [data.title, data.content, data.author, now, data.id]
+    ];
 
     database.execute(query, values, function(error){
         callback(error);
@@ -227,11 +236,14 @@ exports.delete = function(data, callback){
     });
 }
 ```
-ㅇㅇㅇ
+* 데이터베이스에 보낼 쿼리를 완성한다.
+	* ex) insert into board(테이블이름) (title,content,author,date) VALUES ? 
+	* 각 항목에 들어갈 값은 values변수에 배열 형태로 넣어서 database모듈의 index파일로 보낸다.
 
 ---
 ### index.js(database)
-ㅇㅇㅇ
+데이터 베이스에 excess하여 데이터를 가져오는 역할. (양방향) -> DB 쿼리 실행
+데이터를 가져올 수도 쓸 수 도 있다.
 ```JavaScript
 var mysql = require('mysql');
 var conInfo = {
@@ -288,11 +300,11 @@ exports.executeMulti = function(query, values, callback){
 	});
 }
 ```
-ㅇㅇㅇ
+
 
 ---
 ### error.js
-ㅇㅇㅇ
+에러 처리를 위한 파일
 ```JavaScript
 exports.send = function(response, code, err){
     response.writeHead(code,{'Content-Type':'application/json;charset=utf-8'});
@@ -311,6 +323,6 @@ exports.send = function(response, code, err){
     }
 }
 ```
-ㅇㅇㅇ
+
 
 ---
