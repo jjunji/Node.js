@@ -1,5 +1,5 @@
-var dao = require("./bbsDao");
-var error = require("./error");
+var dao = require("../c_dao/bbsDao");
+var error = require("../error");
 var querystring = require("querystring");
 
 exports.read = function(qs, response){

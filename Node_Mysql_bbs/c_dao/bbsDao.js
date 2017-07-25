@@ -1,4 +1,4 @@
-var database = require("./module/database");
+var database = require("../module/database/index");
 var tableName = "board";
 
 exports.select = function(callback){
@@ -16,9 +16,8 @@ exports.insert = function(data, callback){
     console.log("in bbsDao insert");
     var query = " insert into "+tableName+"(title,content,author,date)";
         query = query + " VALUES ?";
-    var values = [
-        [data.title,data.content,data.author,data.date]
-    ];
+    var values = [data.title,data.content,data.author,data.date];
+    console.log(query);
     database.executeMulti(query, values, callback);
 }
 
@@ -26,7 +25,9 @@ exports.update = function(data, callback){
     var query = " update "+tableName
                 + " set title=?, content=?, author=?, date=? where id=?";
     var now = new Date().toLocaleDateString();
-    var values = [data.title, data.content, data.author, now, data.id];
+    var values = [
+        [data.title, data.content, data.author, now, data.id]
+    ];
 
     database.execute(query, values, function(error){
         callback(error);

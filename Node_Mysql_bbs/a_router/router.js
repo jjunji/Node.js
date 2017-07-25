@@ -1,6 +1,6 @@
 var error = require("../error");
-var bbs = require("../bbs");
-var user = require("../user");
+var bbs = require("../b_controller/bbs");
+var user = require("../b_controller/user");
 // request 를 분석해서 요청 url에 대한 연결
 // url 을 분석
 exports.parse = function (request, response){
