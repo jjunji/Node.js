@@ -47,8 +47,8 @@ exports.update = function(request, response){
         // dataObj = {
         //     id : 10,
         //     title : "수정된 제목",
-        //     content : "수정된 내용 내용 \n 내용내용내ㅛㅇㅇ",
-        //     author : "펀치넬로",
+        //     content : "수정된 내용 내용",
+        //     author : "지훈",
         //     date : "2017-07-24"
         // }
         dao.update(dataObj, function(err){

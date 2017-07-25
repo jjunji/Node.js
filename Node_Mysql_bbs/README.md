@@ -29,8 +29,9 @@ var user = require("../user");
 // url 을 분석
 exports.parse = function (request, response){
     console.log("in router parse");
-    var path = splitQuerystring(request.url);
+    var path = removeQuerystring(request.url);
     if(path == "/bbs"){
+        //---> 주소로 요청된 모듈.js 로 보낸다. 요청주소가 /bbs 라면 bbs.js
         parseMethod(bbs, request, response);
     } else if(path == "/user"){
         parseMethod(user, request, response);
@@ -40,25 +41,35 @@ exports.parse = function (request, response){
 };
 
 // http 메서드를 분석
+//---> 각 모듈별 method 분기처리
 function parseMethod(module, request, response){
     console.log("in router parseMethod");
     if(request.method == "POST"){
         module.write(request, response);
     }else if(request.method == "GET"){
-        module.read(response);
+        module.read(getQuerystring(request.url), response);
     }else if(request.method == "PUT"){
-        module.update(response);
+        module.update(request, response);
     }else if(request.method == "DELETE"){
-        module.delete(response);
+        module.delete(request, response);
     }
 }
 // http://localhost 
-function splitQuerystring(fullUrl){
+function removeQuerystring(fullUrl){
     var position = fullUrl.indexOf('?'); // ?의 위치값을 반환. 없으면 -1
     if(position == -1){
         return fullUrl;
     }else{
         return fullUrl.substring(0, position);
+    }
+}
+
+function getQuerystring(fullUrl){
+    var position = fullUrl.indexOf('?'); // ?의 위치값을 반환. 없으면 -1
+    if(position == -1){
+        return "";
+    }else{
+        return fullUrl.substring(position + 1);
     }
 }
 ```
@@ -82,8 +93,26 @@ function splitQuerystring(fullUrl){
 ㅇㅇㅇ
 ```JavaScript
 var dao = require("./bbsDao");
-exports.read = function(response){
-    send(response, "READ");
+var error = require("./error");
+var querystring = require("querystring");
+
+exports.read = function(qs, response){
+    if( qs == ""){
+        dao.select(function(data){  // dao를 통해 db를 읽고난 후 결과셋을 처리하는 코드
+            var jsonString = JSON.stringify(data); // data를 받아서 json 형태로 바꿈
+            send(response, jsonString);
+        });
+    }else{
+        var parsedQs = querystring.parse(qs, '&', '=');
+        // parsedQs = {
+        //     title : "제목",
+        //     author : "홍길동"
+        // }
+        dao.search(parsedQs, function(data){
+            var jsonString = Json.stringify(data);
+            send(response,jsonString);
+        });
+    }
 }
 exports.write = function(request, response){
     console.log("in bbs write");
@@ -95,23 +124,193 @@ exports.write = function(request, response){
     request.on('end', function(){ // 데이터를 다 읽었을 때 호출
         var dataObj = JSON.parse(postdata);
         dao.insert(dataObj, function(){
-            send(response, "WRITE Success!");
+            send(response, '{"result":"ok"}');
         });
     });
 }
-exports.update = function(response){
-    send(response, "UPDATE");
-}
-exports.delete = function(response){
-    send(response, "DELTE");
+
+// update는 write와 동작 방식 유사.
+exports.update = function(request, response){
+    // 요청한 데이터를 담을 변수를 선언
+    var postdata = "";
+    request.on('data', function(data){ // 데이터가 버퍼에 가득차면 자동으로 호출
+        postdata = postdata + data;
+    });
+    request.on('end', function(){ // 데이터를 다 읽었을 때 호출
+        var dataObj = JSON.parse(postdata);
+        // dataObj = {
+        //     id : 10,
+        //     title : "수정된 제목",
+        //     content : "수정된 내용 내용",
+        //     author : "지훈",
+        //     date : "2017-07-24"
+        // }
+        dao.update(dataObj, function(err){
+            if(err){
+                error.send(response, 500, err);
+            }else{
+                send(response, '{"result":"ok"}');
+            }
+        });
+    });
 }
 
-function send(response, flag){
-    response.writeHead(200,{'Content-Type':'text/html'});
-    response.end("BBS "+flag);
+exports.delete = function(request, response){
+      // 요청한 데이터를 담을 변수를 선언
+    var postdata = "";
+    request.on('data', function(data){ // 데이터가 버퍼에 가득차면 자동으로 호출
+        postdata = postdata + data;
+    });
+    request.on('end', function(){ // 데이터를 다 읽었을 때 호출
+        var dataObj = JSON.parse(postdata);
+        dao.delete(dataObj, function(err){
+            if(err){
+                error.send(response, 500, err);
+            }else{
+                send(response, '{"result":"ok"}');
+            }
+        });
+    });
+}
+
+function send(response, result){
+    response.writeHead(200,{'Content-Type':'application/json;charset=utf-8'});
+    response.end(result);
 }
 ```
 ㅇㅇㅇ
 
 ---
+### bbsDao.js
+ㅇㅇㅇ
+```JavaScript
+var database = require("./module/database");
+var tableName = "board";
 
+exports.select = function(callback){
+    var query = "select * from "+tableName+" ";
+    database.executeQuery(query, callback);
+}
+
+exports.search = function(qs, callback){
+    var query = "select * from" +tableName+ "where title like '%" + qs.title + "%' ";
+    console.log(query);
+    database.executeQuery(query, callback);
+}
+
+exports.insert = function(data, callback){
+    console.log("in bbsDao insert");
+    var query = " insert into "+tableName+"(title,content,author,date)";
+        query = query + " VALUES ?";
+    var values = [
+        [data.title,data.content,data.author,data.date]
+    ];
+    database.executeMulti(query, values, callback);
+}
+
+exports.update = function(data, callback){
+    var query = " update "+tableName
+                + " set title=?, content=?, author=?, date=? where id=?";
+    var now = new Date().toLocaleDateString();
+    var values = [data.title, data.content, data.author, now, data.id];
+
+    database.execute(query, values, function(error){
+        callback(error);
+    })
+}
+
+exports.delete = function(data, callback){
+    var query = "delete from "+tableName+" where id = ?";
+    var values = [data.id];
+    database.execute(query, values, function(error){
+        callback(error);
+    });
+}
+```
+ㅇㅇㅇ
+
+---
+### index.js(database)
+ㅇㅇㅇ
+```JavaScript
+var mysql = require('mysql');
+var conInfo = {
+	host : '127.0.0.1', // 데이터베이스 아이피 또는 url
+	user : 'root',      // 사용자 아이디
+	password : 'mysql', // 비밀번호
+	port : '3306',        // 포트
+	database : 'bbs'    // 데이터베이스
+};
+
+// 쿼리 후에 결과값을 리턴해주는 함수
+exports.executeQuery = function(query, callback){
+	var con = mysql.createConnection(conInfo);
+	con.connect();
+	con.query(query, function(err, items, fields){ // 데이터베이스에 쿼리 실행
+		if(err){
+			// 에러처리
+			console.log(err);
+		}else{
+			callback(items);
+		}
+		this.end();  // mysql 연결 해제
+	});
+}
+
+// 쿼리를 실행만 하는 함수
+exports.execute = function(query, values, callback){
+	var con = mysql.createConnection(conInfo);
+	con.connect();
+	con.query(query, values, function(err, result){ // 데이터베이스에 쿼리 실행
+		if(err){
+			// 에러처리
+			callback(err);
+		}else{
+			callback();
+		}
+		this.end();  // mysql 연결 해제
+	});
+}
+
+// 쿼리를 실행만 하는 함수
+exports.executeMulti = function(query, values, callback){
+	console.log("in database executeMulti");
+	var con = mysql.createConnection(conInfo);
+	con.connect();
+	con.query(query, [[values]], function(err, result){ // 데이터베이스에 쿼리 실행
+		console.log("in database executeMulti query");
+		if(err){
+			console.log(err);
+		}else{
+			callback();
+		}
+		this.end();  // mysql 연결 해제
+	});
+}
+```
+ㅇㅇㅇ
+
+---
+### error.js
+ㅇㅇㅇ
+```JavaScript
+exports.send = function(response, code, err){
+    response.writeHead(code,{'Content-Type':'application/json;charset=utf-8'});
+    if(code == 404){
+        var errorObj = {
+            result : "404 Page Not Found",
+            msg : ""
+        };
+        response.end(JSON.stringify(errorObj));
+    }else if(code == 500){
+        var errorObj = {
+            result : "500 Internal Server Error",
+            msg : err
+        };
+        response.end(JSON.stringify(errorObj));
+    }
+}
+```
+ㅇㅇㅇ
+
+---
