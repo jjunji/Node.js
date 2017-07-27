@@ -19,8 +19,7 @@ server.listen(80, function(){
     console.log("server's running...");
 });
 ```
-* 서버가 생성되면 router 모듈의 parse( ) 함수 실행.
-*  
+* 서버가 생성되면 router 모듈의 parse( ) 함수 실행. 
 
 --- 
 ### router.js

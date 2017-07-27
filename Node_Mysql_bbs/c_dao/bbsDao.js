@@ -2,7 +2,7 @@ var database = require("../module/database/index");
 var tableName = "board";
 
 exports.select = function(callback){
-    var query = "select * from "+tableName+" ";
+    var query = "select * from "+tableName+" order by id desc";
     database.executeQuery(query, callback);
 }
 
@@ -18,10 +18,9 @@ exports.insert = function(data, callback){
     console.log("pre query ==========" + query);
         query = query + " VALUES ?";
     var values = [data.title,data.content,data.author,data.date];
-    console.log("result query =========="+ query);
     database.executeMulti(query, values, callback);
 }
-
+  
 exports.update = function(data, callback){
     var query = " update "+tableName
                 + " set title=?, content=?, author=?, date=? where id=?";
