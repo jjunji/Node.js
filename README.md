@@ -6,7 +6,7 @@
 *  모듈
 * JavaScript 구조
 
-### 2. [Callback & File Read N Write ](https://github.com/jjunji/Node.js/tree/master/server_basic)
+### 2. [Callback & File Read N Write ](https://github.com/jjunji/Node.js/tree/master/callback_test)
 * Callback 연습
 * 비동기로 파일 읽기
 * 비동기로 파일 쓰기
