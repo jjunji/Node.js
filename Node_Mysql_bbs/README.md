@@ -1,310 +1,104 @@
-# Database ¿¬°á
+Nodejs - Database ì—°ë™
+======================
 
+ì „ì²´ í”„ë¡œì„¸ìŠ¤
+-------------
+
+![](https://github.com/jjunji/Node.js/blob/master/Node_Mysql_bbs/c_dao/bbs%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4.PNG)
+-------------------------------------------------------------------------------------------------------------------
+
+ì½œë°± ë™ì‘ ê³¼ì •
+--------------
+
+![](https://github.com/jjunji/Node.js/blob/master/Node_Mysql_bbs/c_dao/process1.jpg)
+
+![](https://github.com/jjunji/Node.js/blob/master/Node_Mysql_bbs/c_dao/process2.jpg)
+------------------------------------------------------------------------------------
 
 ### server.js
-ÄÚµå ÀÛ¼º ÈÄ ÅÍ¹Ì³Î¿¡¼­ node server(jsÆÄÀÏ ¸í) À¸·Î ½ÇÇà. -> ÁøÀÔÁ¡.
-```JavaScript
-// 1. ¼­¹ö¸ğµâ
+
+ì½”ë“œ ì‘ì„± í›„ í„°ë¯¸ë„ì—ì„œ node server(jsíŒŒì¼ ëª…) ìœ¼ë¡œ ì‹¤í–‰. -> ì§„ì…ì .`JavaScript
+// 1. ì„œë²„ëª¨ë“ˆ
 var http = require("http");
 var router = require("./a_router/router");
-// 2. ¼­¹ö¸¦ »ı¼º
+// 2. ì„œë²„ë¥¼ ìƒì„±
 var server = http.createServer(function(request, response){
-    // ¿äÃ» url ºĞ¼®
+    // ìš”ì²­ url ë¶„ì„
     console.log("in server");
-    //---> ¸ğµç ¿äÃ»¿¡ ´ëÇØ router.js ·Î º¸³½´Ù
+    //---> ëª¨ë“  ìš”ì²­ì— ëŒ€í•´ router.js ë¡œ ë³´ë‚¸ë‹¤
     router.parse(request, response);
 });
-// 3. ¼­¹ö¸¦ ½ÃÀÛ , »ı¼ºÇÑ ¼­¹ö°¡ 80¹ø Æ÷Æ®¸¦ ¸®½º´× ÇÏµµ·Ï ÁöÁ¤.
+// 3. ì„œë²„ë¥¼ ì‹œì‘ , ìƒì„±í•œ ì„œë²„ê°€ 80ë²ˆ í¬íŠ¸ë¥¼ ë¦¬ìŠ¤ë‹ í•˜ë„ë¡ ì§€ì •.
 server.listen(80, function(){
     console.log("server's running...");
 });
-```
-* ¼­¹ö°¡ »ı¼ºµÇ¸é router ¸ğµâÀÇ parse( ) ÇÔ¼ö ½ÇÇà. 
+`* ì„œë²„ê°€ ìƒì„±ë˜ë©´ router ëª¨ë“ˆì˜ parse( ) í•¨ìˆ˜ ì‹¤í–‰.
 
---- 
+---
+
 ### router.js
-¿äÃ» url°ú ¸Ş¼Òµå¸¦ ºĞ¼®ÇÏ°í ¿äÃ» url¿¡ ¸ÅÇÎµÇ´Â ºñÁî´Ï½º ·ÎÁ÷À» È£Ãâ(°æ·Î Ã³¸®)
-```JavaScript
-var error = require("../error");
-var bbs = require("../b_controller/bbs");
-var user = require("../b_controller/user");
-// request ¸¦ ºĞ¼®ÇØ¼­ ¿äÃ» url¿¡ ´ëÇÑ ¿¬°á
-// url À» ºĞ¼®
-exports.parse = function (request, response){
-    console.log("in router parse");
-    var path = removeQuerystring(request.url);
-    if(path == "/bbs"){
-        //---> ÁÖ¼Ò·Î ¿äÃ»µÈ ¸ğµâ.js ·Î º¸³½´Ù. ¿äÃ»ÁÖ¼Ò°¡ /bbs ¶ó¸é bbs.js
-        parseMethod(bbs, request, response);
-    } else if(path == "/user"){
-        parseMethod(user, request, response);
-    } else {
-        error.send(response, 404);
-    }
-};
 
-// http ¸Ş¼­µå¸¦ ºĞ¼®
-//---> °¢ ¸ğµâº° method ºĞ±âÃ³¸®
-function parseMethod(module, request, response){
-    console.log("in router parseMethod");
-    if(request.method == "POST"){
-        module.write(request, response);
-    }else if(request.method == "GET"){
-        module.read(getQuerystring(request.url), response);
-    }else if(request.method == "PUT"){
-        module.update(request, response);
-    }else if(request.method == "DELETE"){
-        module.delete(request, response);
-    }
-}
-// http://localhost 
-function removeQuerystring(fullUrl){
-    var position = fullUrl.indexOf('?'); // ?ÀÇ À§Ä¡°ªÀ» ¹İÈ¯. ¾øÀ¸¸é -1
-    if(position == -1){
-        return fullUrl;
-    }else{
-        return fullUrl.substring(0, position);
-    }
-}
+ìš”ì²­ urlê³¼ ë©”ì†Œë“œë¥¼ ë¶„ì„í•˜ê³  ìš”ì²­ urlì— ë§¤í•‘ë˜ëŠ” ë¹„ì¦ˆë‹ˆìŠ¤ ë¡œì§ì„ í˜¸ì¶œ(ê²½ë¡œ ì²˜ë¦¬)\`\``JavaScript var error = require("../error"); var bbs = require("../b_controller/bbs"); var user = require("../b_controller/user"); // request ë¥¼ ë¶„ì„í•´ì„œ ìš”ì²­ urlì— ëŒ€í•œ ì—°ê²° // url ì„ ë¶„ì„ exports.parse = function (request, response){ console.log("in router parse"); var path = removeQuerystring(request.url); if(path == "/bbs"){ //---> ì£¼ì†Œë¡œ ìš”ì²­ëœ ëª¨ë“ˆ.js ë¡œ ë³´ë‚¸ë‹¤. ìš”ì²­ì£¼ì†Œê°€ /bbs ë¼ë©´ bbs.js parseMethod(bbs, request, response); } else if(path == "/user"){ parseMethod(user, request, response); } else { error.send(response, 404); } };
 
-function getQuerystring(fullUrl){
-    var position = fullUrl.indexOf('?'); // ?ÀÇ À§Ä¡°ªÀ» ¹İÈ¯. ¾øÀ¸¸é -1
-    if(position == -1){
-        return "";
-    }else{
-        return fullUrl.substring(position + 1);
-    }
-}
-```
-* exports.parse
-	-> exports °´Ã¼¸¦ ÅëÇØ parse ¸ğµâ »ı¼º.
-*  parse ¸ğµâÀº ¾Æ·¡¿Í °°Àº ±â´ÉÀ» ¼öÇàÇÑ´Ù.
-	*  var path = splitQuerystring(request.url);
-	-> path º¯¼ö¿¡ splitQuerystring ÇÔ¼ö·Î ºÎÅÍ ¹İÈ¯µÈ °ªÀ» ´ã´Â´Ù.
-	    Àü´Ş ÇÑ °ª : ¿äÃ» ÁÖ¼Ò.url -> ¿äÃ» ÁÖ¼Ò¸¦ º¸³½´Ù.
-	    ¹İÈ¯ µÈ °ª :  ¿äÃ» ÁÖ¼Ò°¡ Á¶°Ç¿¡ ¸ÂÀ¸¹Ç·Î ¿äÃ» ÁÖ¼Ò¸¦ ±×´ë·Î °®´Â´Ù.
-	* splitQuerystring ÇÔ¼ö¿¡¼­ indexOf( ) ´Â ¹®ÀÚ¿­ ¶Ç´Â ¹è¿­¿¡¼­ ¿øÇÏ´Â Æ¯Á¤ ¹®ÀÚÀÇ
-	  À§Ä¡°ªÀ» index·Î ¹İÈ¯ÇÏ´Â ÇÔ¼öÀÌ´Ù. -> '?' À§Ä¡ ³ª¿È.
-	* fullUrl.substring(0, position) -> '?' ¸¦ ±âÁØÀ¸·Î ¹®ÀÚ¿­À» ³ª´®. -> ? ÀÌÀüÀÇ ÁÖ¼Ò ¹İÈ¯
-	* Á¶°Ç¹®¿¡ ¸Â´Â ÀÎÀÚ¸¦ parseMethod ÇÔ¼ö·Î º¸³½´Ù.
-* parseMethod ÇÔ¼ö´Â ¾Æ·¡¿Í °°Àº ±â´ÉÀ» ¼öÇàÇÑ´Ù.
-	* request.method( ) ¸¦ ÅëÇØ ¿äÃ» Å¸ÀÔ ºĞ¼®.
-	* °¢ Å¸ÀÔ¿¡ ¸Â´Â ¸ğµâ ½ÇÇà -> ex) post Å¸ÀÔÀÌ¸é module.write( ) ¼öÇà.
+// http ë©”ì„œë“œë¥¼ ë¶„ì„ //---> ê° ëª¨ë“ˆë³„ method ë¶„ê¸°ì²˜ë¦¬ function parseMethod(module, request, response){ console.log("in router parseMethod"); if(request.method == "POST"){ module.write(request, response); }else if(request.method == "GET"){ module.read(getQuerystring(request.url), response); }else if(request.method == "PUT"){ module.update(request, response); }else if(request.method == "DELETE"){ module.delete(request, response); } } // http://localhost function removeQuerystring(fullUrl){ var position = fullUrl.indexOf('?'); // ?ì˜ ìœ„ì¹˜ê°’ì„ ë°˜í™˜. ì—†ìœ¼ë©´ -1 if(position == -1){ return fullUrl; }else{ return fullUrl.substring(0, position); } }
+
+function getQuerystring(fullUrl){ var position = fullUrl.indexOf('?'); // ?ì˜ ìœ„ì¹˜ê°’ì„ ë°˜í™˜. ì—†ìœ¼ë©´ -1 if(position == -1){ return ""; }else{ return fullUrl.substring(position + 1); } }\`\`\`* exports.parse -> exports ê°ì²´ë¥¼ í†µí•´ parse ëª¨ë“ˆ ìƒì„±.* parse ëª¨ë“ˆì€ ì•„ë˜ì™€ ê°™ì€ ê¸°ëŠ¥ì„ ìˆ˜í–‰í•œë‹¤. * var path = splitQuerystring(request.url); -> path ë³€ìˆ˜ì— splitQuerystring í•¨ìˆ˜ë¡œ ë¶€í„° ë°˜í™˜ëœ ê°’ì„ ë‹´ëŠ”ë‹¤. ì „ë‹¬ í•œ ê°’ : ìš”ì²­ ì£¼ì†Œ.url -> ìš”ì²­ ì£¼ì†Œë¥¼ ë³´ë‚¸ë‹¤. ë°˜í™˜ ëœ ê°’ : ìš”ì²­ ì£¼ì†Œê°€ ì¡°ê±´ì— ë§ìœ¼ë¯€ë¡œ ìš”ì²­ ì£¼ì†Œë¥¼ ê·¸ëŒ€ë¡œ ê°–ëŠ”ë‹¤. * splitQuerystring í•¨ìˆ˜ì—ì„œ indexOf( ) ëŠ” ë¬¸ìì—´ ë˜ëŠ” ë°°ì—´ì—ì„œ ì›í•˜ëŠ” íŠ¹ì • ë¬¸ìì˜ ìœ„ì¹˜ê°’ì„ indexë¡œ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜ì´ë‹¤. -> '?' ìœ„ì¹˜ ë‚˜ì˜´. * fullUrl.substring(0, position) -> '?' ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ë¬¸ìì—´ì„ ë‚˜ëˆ”. -> ? ì´ì „ì˜ ì£¼ì†Œ ë°˜í™˜ * ì¡°ê±´ë¬¸ì— ë§ëŠ” ì¸ìë¥¼ parseMethod í•¨ìˆ˜ë¡œ ë³´ë‚¸ë‹¤.* parseMethod í•¨ìˆ˜ëŠ” ì•„ë˜ì™€ ê°™ì€ ê¸°ëŠ¥ì„ ìˆ˜í–‰í•œë‹¤. * request.method( ) ë¥¼ í†µí•´ ìš”ì²­ íƒ€ì… ë¶„ì„. * ê° íƒ€ì…ì— ë§ëŠ” ëª¨ë“ˆ ì‹¤í–‰ -> ex) post íƒ€ì…ì´ë©´ module.write( ) ìˆ˜í–‰.
 
 ---
+
 ### bbs.js
-bbsDao.js ¸¦ ÅëÇØ database¸¦ ÀĞ°í³­ ÈÄ °á°ú¼ÂÀ» Ã³¸®ÇÑ´Ù.
-```JavaScript
-var dao = require("./bbsDao");
-var error = require("./error");
-var querystring = require("querystring");
 
-exports.read = function(qs, response){
-    if( qs == ""){
-        dao.select(function(data){  // dao¸¦ ÅëÇØ db¸¦ ÀĞ°í³­ ÈÄ °á°ú¼ÂÀ» Ã³¸®ÇÏ´Â ÄÚµå
-            var jsonString = JSON.stringify(data); // data¸¦ ¹Ş¾Æ¼­ json ÇüÅÂ·Î ¹Ù²Ş
-            send(response, jsonString);
-        });
-    }else{
-        var parsedQs = querystring.parse(qs, '&', '=');
-        // parsedQs = {
-        //     title : "Á¦¸ñ",
-        //     author : "È«±æµ¿"
-        // }
-        dao.search(parsedQs, function(data){
-            var jsonString = Json.stringify(data);
-            send(response,jsonString);
-        });
-    }
-}
-exports.write = function(request, response){
-    console.log("in bbs write");
-    // µ¥ÀÌÅÍ¸¦ ²¨³»ÀÚ
-    var postdata = "";
-    request.on('data', function(data){ // µ¥ÀÌÅÍ¸¦ ÀĞÀ» ¼ö ÀÖÀ» ¶§ È£Ãâ
-        postdata = postdata + data;
-    });
-    request.on('end', function(){ // µ¥ÀÌÅÍ¸¦ ´Ù ÀĞ¾úÀ» ¶§ È£Ãâ
-        var dataObj = JSON.parse(postdata);
-        dao.insert(dataObj, function(){
-            send(response, '{"result":"ok"}');
-        });
-    });
-}
+bbsDao.js ë¥¼ í†µí•´ databaseë¥¼ ì½ê³ ë‚œ í›„ ê²°ê³¼ì…‹ì„ ì²˜ë¦¬í•œë‹¤.\`\``JavaScript var dao = require("./bbsDao"); var error = require("./error"); var querystring = require("querystring");
 
-// update´Â write¿Í µ¿ÀÛ ¹æ½Ä À¯»ç.
-exports.update = function(request, response){
-    // ¿äÃ»ÇÑ µ¥ÀÌÅÍ¸¦ ´ãÀ» º¯¼ö¸¦ ¼±¾ğ
-    var postdata = "";
-    request.on('data', function(data){ // µ¥ÀÌÅÍ°¡ ¹öÆÛ¿¡ °¡µæÂ÷¸é ÀÚµ¿À¸·Î È£Ãâ
-        postdata = postdata + data;
-    });
-    request.on('end', function(){ // µ¥ÀÌÅÍ¸¦ ´Ù ÀĞ¾úÀ» ¶§ È£Ãâ
-        var dataObj = JSON.parse(postdata);
-        // dataObj = {
-        //     id : 10,
-        //     title : "¼öÁ¤µÈ Á¦¸ñ",
-        //     content : "¼öÁ¤µÈ ³»¿ë ³»¿ë",
-        //     author : "ÁöÈÆ",
-        //     date : "2017-07-24"
-        // }
-        dao.update(dataObj, function(err){
-            if(err){
-                error.send(response, 500, err);
-            }else{
-                send(response, '{"result":"ok"}');
-            }
-        });
-    });
-}
+exports.read = function(qs, response){ if( qs == ""){ dao.select(function(data){ // daoë¥¼ í†µí•´ dbë¥¼ ì½ê³ ë‚œ í›„ ê²°ê³¼ì…‹ì„ ì²˜ë¦¬í•˜ëŠ” ì½”ë“œ var jsonString = JSON.stringify(data); // dataë¥¼ ë°›ì•„ì„œ json í˜•íƒœë¡œ ë°”ê¿ˆ send(response, jsonString); }); }else{ var parsedQs = querystring.parse(qs, '&', '='); // parsedQs = { // title : "ì œëª©", // author : "í™ê¸¸ë™" // } dao.search(parsedQs, function(data){ var jsonString = Json.stringify(data); send(response,jsonString); }); } } exports.write = function(request, response){ console.log("in bbs write"); // ë°ì´í„°ë¥¼ êº¼ë‚´ì var postdata = ""; request.on('data', function(data){ // ë°ì´í„°ë¥¼ ì½ì„ ìˆ˜ ìˆì„ ë•Œ í˜¸ì¶œ postdata = postdata + data; }); request.on('end', function(){ // ë°ì´í„°ë¥¼ ë‹¤ ì½ì—ˆì„ ë•Œ í˜¸ì¶œ var dataObj = JSON.parse(postdata); dao.insert(dataObj, function(){ send(response, '{"result":"ok"}'); }); }); }
 
-exports.delete = function(request, response){
-      // ¿äÃ»ÇÑ µ¥ÀÌÅÍ¸¦ ´ãÀ» º¯¼ö¸¦ ¼±¾ğ
-    var postdata = "";
-    request.on('data', function(data){ // µ¥ÀÌÅÍ°¡ ¹öÆÛ¿¡ °¡µæÂ÷¸é ÀÚµ¿À¸·Î È£Ãâ
-        postdata = postdata + data;
-    });
-    request.on('end', function(){ // µ¥ÀÌÅÍ¸¦ ´Ù ÀĞ¾úÀ» ¶§ È£Ãâ
-        var dataObj = JSON.parse(postdata);
-        dao.delete(dataObj, function(err){
-            if(err){
-                error.send(response, 500, err);
-            }else{
-                send(response, '{"result":"ok"}');
-            }
-        });
-    });
-}
+// updateëŠ” writeì™€ ë™ì‘ ë°©ì‹ ìœ ì‚¬. exports.update = function(request, response){ // ìš”ì²­í•œ ë°ì´í„°ë¥¼ ë‹´ì„ ë³€ìˆ˜ë¥¼ ì„ ì–¸ var postdata = ""; request.on('data', function(data){ // ë°ì´í„°ê°€ ë²„í¼ì— ê°€ë“ì°¨ë©´ ìë™ìœ¼ë¡œ í˜¸ì¶œ postdata = postdata + data; }); request.on('end', function(){ // ë°ì´í„°ë¥¼ ë‹¤ ì½ì—ˆì„ ë•Œ í˜¸ì¶œ var dataObj = JSON.parse(postdata); // dataObj = { // id : 10, // title : "ìˆ˜ì •ëœ ì œëª©", // content : "ìˆ˜ì •ëœ ë‚´ìš© ë‚´ìš©", // author : "ì§€í›ˆ", // date : "2017-07-24" // } dao.update(dataObj, function(err){ if(err){ error.send(response, 500, err); }else{ send(response, '{"result":"ok"}'); } }); }); }
 
-function send(response, result){
-    response.writeHead(200,{'Content-Type':'application/json;charset=utf-8'});
-    response.end(result);
-}
-```
-* read, write, update, delete¿¡ ÇØ´çÇÏ´Â body¸¦ µ¥ÀÌÅÍ¿¡ ´ã¾Æ °´Ã¼È­ ÇÑ´Ù.
-* °¢ ·ÎÁ÷ÀÇ postdata º¯¼ö°¡ °¡Áö°í ÀÖ´Â °ÍÀº À¥¿¡¼­ ¿äÃ» ½Ã ´ã¾Æ¼­ º¸³½ json ÇüÅÂÀÇ ¹®ÀÚ¿­ÀÌ´Ù.
-*  JSON.parse(postdata); ¸¦ ÇÏ¿© ¹®ÀÚ¿­À» json ÇüÅÂ·Î ³Ö¾îÁØ´Ù.
-	* ¿¹¸¦ µé¾î postdata -> { title: 'Title', author: 'jh', content: 'asdf' } ¸¦ °¡Áö°í ÀÖ´Ù¸é,
-	   title = Title    author = jh   content = asdf  Ã³·³ °ªÀ» ³Ö¾îÁØ´Ù.
+exports.delete = function(request, response){ // ìš”ì²­í•œ ë°ì´í„°ë¥¼ ë‹´ì„ ë³€ìˆ˜ë¥¼ ì„ ì–¸ var postdata = ""; request.on('data', function(data){ // ë°ì´í„°ê°€ ë²„í¼ì— ê°€ë“ì°¨ë©´ ìë™ìœ¼ë¡œ í˜¸ì¶œ postdata = postdata + data; }); request.on('end', function(){ // ë°ì´í„°ë¥¼ ë‹¤ ì½ì—ˆì„ ë•Œ í˜¸ì¶œ var dataObj = JSON.parse(postdata); dao.delete(dataObj, function(err){ if(err){ error.send(response, 500, err); }else{ send(response, '{"result":"ok"}'); } }); }); }
+
+function send(response, result){ response.writeHead(200,{'Content-Type':'application/json;charset=utf-8'}); response.end(result); }\`\`\`* read, write, update, deleteì— í•´ë‹¹í•˜ëŠ” bodyë¥¼ ë°ì´í„°ì— ë‹´ì•„ ê°ì²´í™” í•œë‹¤.* ê° ë¡œì§ì˜ postdata ë³€ìˆ˜ê°€ ê°€ì§€ê³  ìˆëŠ” ê²ƒì€ ì›¹ì—ì„œ ìš”ì²­ ì‹œ ë‹´ì•„ì„œ ë³´ë‚¸ json í˜•íƒœì˜ ë¬¸ìì—´ì´ë‹¤.* JSON.parse(postdata); ë¥¼ í•˜ì—¬ ë¬¸ìì—´ì„ json í˜•íƒœë¡œ ë„£ì–´ì¤€ë‹¤. * ì˜ˆë¥¼ ë“¤ì–´ postdata -> { title: 'Title', author: 'jh', content: 'asdf' } ë¥¼ ê°€ì§€ê³  ìˆë‹¤ë©´, title = Title author = jh content = asdf ì²˜ëŸ¼ ê°’ì„ ë„£ì–´ì¤€ë‹¤.
 
 ---
+
 ### bbsDao.js
-½ÇÁúÀûÀ¸·Î Database¿ÍÀÇ ¿¬°á, Á¢±Ù ÇÏ±â À§ÇÑ ÆÄÀÏ
-```JavaScript
-var database = require("../module/database/index");
-var tableName = "board";
 
-exports.select = function(callback){
-    var query = "select * from "+tableName+" ";
-    database.executeQuery(query, callback);
-}
+ì‹¤ì§ˆì ìœ¼ë¡œ Databaseì™€ì˜ ì—°ê²°, ì ‘ê·¼ í•˜ê¸° ìœ„í•œ íŒŒì¼\`\``JavaScript var database = require("../module/database/index"); var tableName = "board";
 
-exports.search = function(qs, callback){
-    var query = "select * from" +tableName+ "where title like '%" + qs.title + "%' ";
-    console.log(query);
-    database.executeQuery(query, callback);
-}
+exports.select = function(callback){ var query = "select * from "+tableName+" "; database.executeQuery(query, callback); }
 
-exports.insert = function(data, callback){
-    console.log("in bbsDao insert");
-    var query = " insert into "+tableName+"(title,content,author,date)";
-        query = query + " VALUES ?";
-    var values = [data.title,data.content,data.author,data.date];
-    console.log(query);
-    database.executeMulti(query, values, callback);
-}
+exports.search = function(qs, callback){ var query = "select * from" +tableName+ "where title like '%" + qs.title + "%' "; console.log(query); database.executeQuery(query, callback); }
 
-exports.update = function(data, callback){
-    var query = " update "+tableName
-                + " set title=?, content=?, author=?, date=? where id=?";
-    var now = new Date().toLocaleDateString();
-    var values = [
-        [data.title, data.content, data.author, now, data.id]
-    ];
+exports.insert = function(data, callback){ console.log("in bbsDao insert"); var query = " insert into "+tableName+"(title,content,author,date)"; query = query + " VALUES ?"; var values = [data.title,data.content,data.author,data.date]; console.log(query); database.executeMulti(query, values, callback); }
 
-    database.execute(query, values, function(error){
-        callback(error);
-    })
-}
+exports.update = function(data, callback){ var query = " update "+tableName + " set title=?, content=?, author=?, date=? where id=?"; var now = new Date().toLocaleDateString(); var values = \[ [data.title, data.content, data.author, now, data.id] ];
 
-exports.delete = function(data, callback){
-    var query = "delete from "+tableName+" where id = ?";
-    var values = [data.id];
-    database.execute(query, values, function(error){
-        callback(error);
-    });
-}
 ```
-* µ¥ÀÌÅÍº£ÀÌ½º¿¡ º¸³¾ Äõ¸®¸¦ ¿Ï¼ºÇÑ´Ù.
-	* ex) insert into board(Å×ÀÌºíÀÌ¸§) (title,content,author,date) VALUES ? 
-	* °¢ Ç×¸ñ¿¡ µé¾î°¥ °ªÀº valuesº¯¼ö¿¡ ¹è¿­ ÇüÅÂ·Î ³Ö¾î¼­ database¸ğµâÀÇ indexÆÄÀÏ·Î º¸³½´Ù.
+database.execute(query, values, function(error){
+    callback(error);
+})
+```
+
+\}
+
+exports.delete = function(data, callback){ var query = "delete from "+tableName+" where id = ?"; var values = [data.id]; database.execute(query, values, function(error){ callback(error); }); }\`\`\`* ë°ì´í„°ë² ì´ìŠ¤ì— ë³´ë‚¼ ì¿¼ë¦¬ë¥¼ ì™„ì„±í•œë‹¤. * ex) insert into board(í…Œì´ë¸”ì´ë¦„) (title,content,author,date) VALUES ? * ê° í•­ëª©ì— ë“¤ì–´ê°ˆ ê°’ì€ valuesë³€ìˆ˜ì— ë°°ì—´ í˜•íƒœë¡œ ë„£ì–´ì„œ databaseëª¨ë“ˆì˜ indexíŒŒì¼ë¡œ ë³´ë‚¸ë‹¤.
 
 ---
+
 ### index.js(database)
-µ¥ÀÌÅÍ º£ÀÌ½º¿¡ excessÇÏ¿© µ¥ÀÌÅÍ¸¦ °¡Á®¿À´Â ¿ªÇÒ. (¾ç¹æÇâ) -> DB Äõ¸® ½ÇÇà
-µ¥ÀÌÅÍ¸¦ °¡Á®¿Ã ¼öµµ ¾µ ¼ö µµ ÀÖ´Ù.
-```JavaScript
-var mysql = require('mysql');
-var conInfo = {
-	host : '127.0.0.1', // µ¥ÀÌÅÍº£ÀÌ½º ¾ÆÀÌÇÇ ¶Ç´Â url
-	user : 'root',      // »ç¿ëÀÚ ¾ÆÀÌµğ
-	password : 'mysql', // ºñ¹Ğ¹øÈ£
-	port : '3306',        // Æ÷Æ®
-	database : 'bbs'    // µ¥ÀÌÅÍº£ÀÌ½º
-};
 
-// Äõ¸® ÈÄ¿¡ °á°ú°ªÀ» ¸®ÅÏÇØÁÖ´Â ÇÔ¼ö
-exports.executeQuery = function(query, callback){
-	var con = mysql.createConnection(conInfo);
-	con.connect();
-	con.query(query, function(err, items, fields){ // µ¥ÀÌÅÍº£ÀÌ½º¿¡ Äõ¸® ½ÇÇà
-		if(err){
-			// ¿¡·¯Ã³¸®
-			console.log(err);
-		}else{
-			callback(items);
-		}
-		this.end();  // mysql ¿¬°á ÇØÁ¦
-	});
-}
+ë°ì´í„° ë² ì´ìŠ¤ì— excessí•˜ì—¬ ë°ì´í„°ë¥¼ ê°€ì ¸ì˜¤ëŠ” ì—­í• . (ì–‘ë°©í–¥) -> DB ì¿¼ë¦¬ ì‹¤í–‰ ë°ì´í„°ë¥¼ ê°€ì ¸ì˜¬ ìˆ˜ë„ ì“¸ ìˆ˜ ë„ ìˆë‹¤.\`\``JavaScript var mysql = require('mysql'); var conInfo = { host : '127.0.0.1', // ë°ì´í„°ë² ì´ìŠ¤ ì•„ì´í”¼ ë˜ëŠ” url user : 'root', // ì‚¬ìš©ì ì•„ì´ë”” password : 'mysql', // ë¹„ë°€ë²ˆí˜¸ port : '3306', // í¬íŠ¸ database : 'bbs' // ë°ì´í„°ë² ì´ìŠ¤ };
 
-// Äõ¸®¸¦ ½ÇÇà¸¸ ÇÏ´Â ÇÔ¼ö
-exports.execute = function(query, values, callback){
-	var con = mysql.createConnection(conInfo);
-	con.connect();
-	con.query(query, values, function(err, result){ // µ¥ÀÌÅÍº£ÀÌ½º¿¡ Äõ¸® ½ÇÇà
-		if(err){
-			// ¿¡·¯Ã³¸®
-			callback(err);
-		}else{
-			callback();
-		}
-		this.end();  // mysql ¿¬°á ÇØÁ¦
-	});
-}
+// ì¿¼ë¦¬ í›„ì— ê²°ê³¼ê°’ì„ ë¦¬í„´í•´ì£¼ëŠ” í•¨ìˆ˜ exports.executeQuery = function(query, callback){ var con = mysql.createConnection(conInfo); con.connect(); con.query(query, function(err, items, fields){ // ë°ì´í„°ë² ì´ìŠ¤ì— ì¿¼ë¦¬ ì‹¤í–‰ if(err){ // ì—ëŸ¬ì²˜ë¦¬ console.log(err); }else{ callback(items); } this.end(); // mysql ì—°ê²° í•´ì œ }); }
 
-// Äõ¸®¸¦ ½ÇÇà¸¸ ÇÏ´Â ÇÔ¼ö
-exports.executeMulti = function(query, values, callback){
-	console.log("in database executeMulti");
-	var con = mysql.createConnection(conInfo);
-	con.connect();
-	con.query(query, [[values]], function(err, result){ // µ¥ÀÌÅÍº£ÀÌ½º¿¡ Äõ¸® ½ÇÇà
-		console.log("in database executeMulti query");
-		if(err){
-			console.log(err);
-		}else{
-			callback();
-		}
-		this.end();  // mysql ¿¬°á ÇØÁ¦
-	});
-}
-```
+// ì¿¼ë¦¬ë¥¼ ì‹¤í–‰ë§Œ í•˜ëŠ” í•¨ìˆ˜ exports.execute = function(query, values, callback){ var con = mysql.createConnection(conInfo); con.connect(); con.query(query, values, function(err, result){ // ë°ì´í„°ë² ì´ìŠ¤ì— ì¿¼ë¦¬ ì‹¤í–‰ if(err){ // ì—ëŸ¬ì²˜ë¦¬ callback(err); }else{ callback(); } this.end(); // mysql ì—°ê²° í•´ì œ }); }
 
+// ì¿¼ë¦¬ë¥¼ ì‹¤í–‰ë§Œ í•˜ëŠ” í•¨ìˆ˜ exports.executeMulti = function(query, values, callback){ console.log("in database executeMulti"); var con = mysql.createConnection(conInfo); con.connect(); con.query(query, \[[values]], function(err, result){ // ë°ì´í„°ë² ì´ìŠ¤ì— ì¿¼ë¦¬ ì‹¤í–‰ console.log("in database executeMulti query"); if(err){ console.log(err); }else{ callback(); } this.end(); // mysql ì—°ê²° í•´ì œ }); }\`\`\`
 
 ---
+
 ### error.js
-¿¡·¯ Ã³¸®¸¦ À§ÇÑ ÆÄÀÏ
-```JavaScript
+
+ì—ëŸ¬ ì²˜ë¦¬ë¥¼ ìœ„í•œ íŒŒì¼`JavaScript
 exports.send = function(response, code, err){
     response.writeHead(code,{'Content-Type':'application/json;charset=utf-8'});
     if(code == 404){
@@ -321,7 +115,6 @@ exports.send = function(response, code, err){
         response.end(JSON.stringify(errorObj));
     }
 }
-```
-
+`
 
 ---
