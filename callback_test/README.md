@@ -1,5 +1,5 @@
 ﻿# javaScript 기본 함수, 콜백 구조
-<br>
+
 ### 어떤 함수의 매개변수 인자로 함수가 주어졌을 때, 호출 당한 해당 함수를 콜백 함수라고 한다.
 
 ```JavaScript
@@ -107,6 +107,7 @@ exports.print = function(param, callback){
 }
 ```
 ### c.js
+비동기로 파일 읽고, 쓰기
 ```javaScript
 // 파일을 읽고 쓰기
 var fs = require("fs"); // 파일을 읽고 쓰기 위한 모듈
