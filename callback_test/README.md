@@ -1,6 +1,7 @@
 ﻿# javaScript 기본 함수, 콜백 구조
 <br>
 ### 어떤 함수의 매개변수 인자로 함수가 주어졌을 때, 호출 당한 해당 함수를 콜백 함수라고 한다.
+
 ```JavaScript
 var value = 15;
 
@@ -63,7 +64,7 @@ exports.print = function(param, callback){
 ```
 ---
 
-###a.js
+### a.js
 비동기 함수를 호출할 때는 결과 처리 코드가 호출측에 있어야 한다.
 ```javaScript
 var bFile = require("./b");
@@ -86,7 +87,7 @@ cFile.readText("write.txt", function(){
 
 
 ---
-###b.js
+### b.js
 ```javaScript
 // 입력된 파라미터에 1을 더해서 리턴
 
@@ -105,7 +106,7 @@ exports.print = function(param, callback){
     callback(result);
 }
 ```
-###c.js
+### c.js
 ```javaScript
 // 파일을 읽고 쓰기
 var fs = require("fs"); // 파일을 읽고 쓰기 위한 모듈
