@@ -1,14 +1,5 @@
-# Nodejs - Database 연동
+# Database 연결
 
-## 전체 프로스세스
-
-![](https://github.com/jjunji/Node.js/blob/master/Node_Mysql_bbs/c_dao/bbs%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4.PNG)
-
----
-콜백 동작 과정
-![](https://github.com/jjunji/Node.js/blob/master/Node_Mysql_bbs/c_dao/process1.jpg)
-![](https://github.com/jjunji/Node.js/blob/master/Node_Mysql_bbs/c_dao/process2.jpg)
----
 
 ### server.js
 코드 작성 후 터미널에서 node server(js파일 명) 으로 실행. -> 진입점.
